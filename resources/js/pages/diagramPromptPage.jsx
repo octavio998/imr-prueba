@@ -5,6 +5,17 @@ import { Textarea } from "@/components/imr/textarea"
 import { Button } from "@/components/ui/button"
 import BpmnViewer from '@/components/imr/BpmnViewer';
 import React, { useEffect, useState } from 'react';
+import { CheckCircle } from "lucide-react";
+
+function FancyListItem({ text }) {
+  return (
+    <li className="flex items-center gap-3 py-2 px-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+      <CheckCircle className="w-5 h-5 text-green-600" />
+      <span className="text-gray-800 font-medium">{text}</span>
+    </li>
+  );
+}
+
 const breadcrumbs = [
     {
         title: 'PromptUsuario',
@@ -40,7 +51,18 @@ export default function DiagramPromptPage() {
                         </div>
                     </div>
                     <div className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border h-full">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+                        <li className="flex items-center gap-3 py-2 px-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                            <CheckCircle className="w-5 h-5 text-green-600" />
+                            <span className="text-gray-800 font-medium">Describí en el campo de texto tu proceso empresarial para generar un diagrama BPMN. Enviá el prompt para generar uno.</span>
+                        </li>
+                        <li className="flex items-center gap-3 py-2 px-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                            <CheckCircle className="w-5 h-5 text-green-600" />
+                            <span className="text-gray-800 font-medium">Editá el diagrama generado, añadí objetos a gusto.</span>
+                        </li>
+                        <li className="flex items-center gap-3 py-2 px-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                            <CheckCircle className="w-5 h-5 text-green-600" />
+                            <span className="text-gray-800 font-medium">Al finalizar, podés guardarlo. Los diagramas guardados los podrás ver en tu perfil.</span>
+                        </li>
                     </div>
                 </div>
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
