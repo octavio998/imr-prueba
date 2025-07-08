@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\OpenAIController;
+use App\Http\Controllers\GaminiAIController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -18,6 +20,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ],
         ]);
     })->name('diagram-prompt');
+Route::get('/check', [OpenAIController::class, 'complete']);
+Route::get('/check2', [GaminiAIController::class, 'complete']);
+
+    
 });
 
 require __DIR__.'/settings.php';
