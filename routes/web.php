@@ -11,6 +11,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+    Route::get('diagram-prompt', function () {
+        return Inertia::render('diagramPromptPage', [
+            'breadcrumbs' => [
+                ['title' => 'PromptUsuario', 'href' => '/diagram-prompt'],
+            ],
+        ]);
+    })->name('diagram-prompt');
 });
 
 require __DIR__.'/settings.php';

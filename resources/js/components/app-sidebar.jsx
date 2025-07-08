@@ -12,6 +12,11 @@ const mainNavItems = [
         url: '/dashboard',
         icon: LayoutGrid,
     },
+    {
+        title: 'User Prompts',
+        url: '/diagram-prompt',
+        icon: LayoutGrid,
+    },
 ];
 
 const footerNavItems = [
