@@ -157,3 +157,28 @@
         @apply bg-background text-foreground;
     }
 }
+
+rect {
+  fill: black;
+}
+
+
+.djs-hit {
+  fill: none !important;
+  stroke: none !important;
+  pointer-events: all; /* importante: deja clickeable sin verse */
+}
+.djs-connection.djs-selected path {
+  stroke-width: 2px !important;
+  stroke: #2980b9 !important; /* o el color que prefieras */
+}
+
+.djs-connection.djs-selected path {
+  stroke: #007bff !important;
+  stroke-width: 2px !important;
+}
+
+.djs-connection path {
+  stroke: #000 !important;
+  stroke-width: 1.5px !important;
+}
