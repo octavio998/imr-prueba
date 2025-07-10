@@ -14,7 +14,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
     Route::get('diagram-prompt', function () {
-        return Inertia::render('diagramPromptPage', [
+        return Inertia::render('DiagramPromptPage', [
             'breadcrumbs' => [
                 ['title' => 'PromptUsuario', 'href' => '/diagram-prompt'],
             ],
@@ -22,6 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('diagram-prompt');
 Route::get('/check', [OpenAIController::class, 'complete']);
 Route::get('/check2', [GaminiAIController::class, 'complete']);
+Route::post('/generate-bpmn-prompt', [OpenAIController::class, 'generateBpmnFromPrompt'])->name('generate-bpmn-prompt');
 
     
 });
