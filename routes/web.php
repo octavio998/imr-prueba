@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\OpenAIController;
 use App\Http\Controllers\GaminiAIController;
+use App\Models\Diagram;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -11,7 +12,15 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        $diagramas = Diagram::whereNull('deleted_at')->get();
+// Eliminar diagramas eliminados
+        
+        return Inertia::render('Dashboard', [
+            'breadcrumbs' => [
+                ['title' => 'Dashboard', 'href' => '/dashboard'],
+            ],
+            'diagramas' => $diagramas,
+        ]);
     })->name('dashboard');
     Route::get('diagram-prompt', function () {
         return Inertia::render('DiagramPromptPage', [

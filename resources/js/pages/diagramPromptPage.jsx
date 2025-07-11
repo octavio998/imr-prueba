@@ -1,12 +1,13 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { Textarea } from "@/components/imr/textarea";
 import { Button } from "@/components/ui/button";
 import BpmnViewer from '@/components/imr/BpmnViewer';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { CheckCircle, Loader2 } from "lucide-react";
 import axios from 'axios';
+
 function FancyListItem({ text }) {
   return (
     <li className="flex items-center gap-3 py-2 px-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
@@ -24,100 +25,43 @@ const breadcrumbs = [
 ];
 
 export default function DiagramPromptPage() {
-    const { props } = usePage();
-    const { bpmnXml, successMessage: successFromServer, errorMessage: errorFromServer } = props;
+  const [prompt, setPrompt] = useState('');
+  const [xml, setXml] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [processing, setProcessing] = useState(false);
 
-    const [xml, setXml] = useState(null);
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-
-    const { data, setData, post, processing, errors } = useForm({
-        prompt: '',
-    });
- // Cuando llega nuevo XML desde el backend, actualizar el estado
-  useEffect(() => {
-    if (bpmnXml) {
-      setXml(bpmnXml);
-        console.log('Nuevo XML recibido:', bpmnXml);
-    }
-    if (successFromServer) {
-      setSuccessMessage(successFromServer);
-    }
-    if (errorFromServer) {
-      setErrorMessage(errorFromServer);
-    }
-  }, [bpmnXml, successFromServer, errorFromServer]);
-
-  /*useEffect(() => {
-    fetch('/diagrams/sample.bpmn')
-      .then(response => response.text())
-      .then(data => {
-        setXml(data);
-        console.log('Archivo BPMN cargado:', data);
-      })
-      .catch(error => {
-        console.error('Error al cargar el archivo BPMN:', error);
-      });
-  }, []);*/
-
-  /*const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setSuccessMessage('');
     setErrorMessage('');
+    setXml(null);
+    setProcessing(true);
 
-    post('/generate-bpmn-prompt', {
-  preserveScroll: true,
-  preserveState: true,
-  // remove `replace: true`
-  onSuccess: (page) => {
-    const newXml = page.props.bpmnXml;
-    const newSuccessMessage = page.props.successMessage;
-    if (newXml) {
-        setXml(newXml);
-    }
-    if (newSuccessMessage) {
-        setSuccessMessage(newSuccessMessage);
-    }
-  },
-  onError: (formErrors) => {
-    const backendError = formErrors.prompt;
-    if (backendError) {
-      setErrorMessage(backendError);
-    } else {
-      setErrorMessage('Ocurrió un error inesperado.');
-    }
-  }
-});
-  };*/
-const handleSubmit = async (e) => {
-  e.preventDefault();
+    try {
+      const response = await axios.post('/generate-bpmn-prompt', {
+        prompt: prompt
+      });
 
-  setSuccessMessage('');
-  setErrorMessage('');
-  setXml(null);
-
-  try {
-    const response = await axios.post('/generate-bpmn-prompt', {
-      prompt: data.prompt
-    });
-
-    if (response.data.bpmnXml) {
-      setXml(response.data.bpmnXml);
-      setSuccessMessage(response.data.successMessage);
-    } else {
-      setErrorMessage('No se recibió un diagrama válido.');
+      if (response.data.bpmnXml) {
+        setXml(response.data.bpmnXml);
+        setSuccessMessage(response.data.successMessage || '¡Diagrama generado correctamente!');
+      } else {
+        setErrorMessage('No se recibió un diagrama válido.');
+      }
+    } catch (error) {
+      if (error.response?.data?.errorMessage) {
+        setErrorMessage(error.response.data.errorMessage);
+      } else if (error.response?.data?.errors?.prompt) {
+        setErrorMessage(error.response.data.errors.prompt[0]);
+      } else {
+        setErrorMessage('Ocurrió un error al generar el diagrama.');
+      }
+    } finally {
+      setProcessing(false);
     }
-  } catch (error) {
-    if (error.response?.data?.errorMessage) {
-      setErrorMessage(error.response.data.errorMessage);
-    } else if (error.response?.data?.errors?.prompt) {
-      setErrorMessage(error.response.data.errors.prompt[0]);
-    } else {
-      setErrorMessage('Ocurrió un error al generar el diagrama.');
-    }
-  }
-};
+  };
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -142,19 +86,16 @@ const handleSubmit = async (e) => {
               <Textarea
                 className="min-h-[150px] resize-y flex-1"
                 placeholder="Describe tu proceso empresarial aquí para generar un diagrama BPMN..."
-                value={data.prompt}
-                onChange={(e) => setData('prompt', e.target.value)}
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
                 disabled={processing}
               />
-              {errors.prompt && (
-                <div className="text-red-600 text-sm">{errors.prompt}</div>
-              )}
               <div className="flex justify-end">
                 <Button
                   type="submit"
                   variant="default"
                   size="lg"
-                  disabled={processing || !data.prompt.trim()}
+                  disabled={processing || !prompt.trim()}
                   className="cursor-pointer"
                 >
                   {processing ? (

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use OpenAI\Laravel\Facades\OpenAI;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Diagram; // Agrega este use al inicio
 
 class OpenAIController extends Controller
 {
@@ -101,45 +102,45 @@ class OpenAIController extends Controller
                 'max_tokens' => 2000,
                 'temperature' => 0.3
             ]);
-
+            
             $bpmnXml = $result->choices[0]->message->content;
             if (!$this->isValidXml($bpmnXml)) {
-            return response()->json([
-                'errorMessage' => 'Error generating valid BPMN XML'
-            ], 422);
-        }
-
-        return response()->json([
-            'bpmnXml' => $bpmnXml,
-            'successMessage' => '¡Éxito! Se ha generado tu diagrama BPMN.'
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'errorMessage' => 'Error connecting to OpenAI: ' . $e->getMessage()
-        ], 500);
-    }
-       /*     if (!$this->isValidXml($bpmnXml)) {
-                //d($bpmnXml);
-                return Inertia::render('DiagramPromptPage', [
-                    'errorMessage' => 'Error generating valid BPMN XML',
-                    'bpmnXml' => null
-                ]);
+                return response()->json([
+                    'errorMessage' => 'Error generating valid BPMN XML'
+                ], 422);
             }
 
-            return Inertia::render('DiagramPromptPage', [
+            // 1. Crear el registro en la base de datos (sin xml aún)
+            $diagram = new Diagram();
+            $diagram->prompt = $prompt;
+            $diagram->xml = ''; // Temporalmente vacío
+            $diagram->save();
+
+            // 2. Definir la ruta y guardar el archivo
+            $folder = public_path('diagrams/' . $diagram->id);
+            if (!is_dir($folder)) {
+                mkdir($folder, 0777, true);
+            }
+            $fileName = 'diagram_bpmn.xsl';
+            $filePath = 'diagrams/' . $diagram->id . '/' . $fileName;
+            file_put_contents(public_path($filePath), $bpmnXml);
+
+            // 3. Actualizar el campo xml con la ruta
+            $diagram->xml = $filePath;
+            $diagram->save();
+
+            return response()->json([
                 'bpmnXml' => $bpmnXml,
                 'successMessage' => '¡Éxito! Se ha generado tu diagrama BPMN.',
-            ]);*/
-          /*  return back()->with([
-    'bpmnXml' => $bpmnXml,
-    'successMessage' => '¡Éxito! Se ha generado tu diagrama BPMN.',
-]);*/
-      /*  } catch (\Exception $e) {
-            return Inertia::render('DiagramPromptPage', [
-                'errorMessage' => 'Error connecting to OpenAI: ' . $e->getMessage(),
-                'bpmnXml' => null
+                'diagramId' => $diagram->id,
+                'xmlPath' => $filePath,
             ]);
-        }*/
+        } catch (\Exception $e) {
+            return response()->json([
+                'errorMessage' => 'Error connecting to OpenAI: ' . $e->getMessage()
+            ], 500);
+        }
+      
     }
 
     public function complete()

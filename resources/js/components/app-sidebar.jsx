@@ -7,14 +7,15 @@ import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems = [
-    {
-        title: 'Dashboard',
-        url: '/dashboard',
-        icon: LayoutGrid,
-    },
+    
     {
         title: 'User Prompts',
         url: '/diagram-prompt',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Dashboard',
+        url: '/dashboard',
         icon: LayoutGrid,
     },
 ];
@@ -22,12 +23,12 @@ const mainNavItems = [
 const footerNavItems = [
     {
         title: 'Repository',
-        url: 'https://github.com/laravel/react-starter-kit',
+        url: 'https://github.com/octavio998/imr-prueba',
         icon: Folder,
     },
     {
         title: 'Documentation',
-        url: 'https://laravel.com/docs/starter-kits',
+        url: '/docs',
         icon: BookOpen,
     },
 ];
