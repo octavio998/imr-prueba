@@ -99,7 +99,7 @@ class OpenAIController extends Controller
                     ['role' => 'system', 'content' => $systemPrompt],
                     ['role' => 'user', 'content' => $prompt]
                 ],
-                'max_tokens' => 2000,
+                'max_tokens' => 5000,
                 'temperature' => 0.3
             ]);
             
@@ -109,31 +109,11 @@ class OpenAIController extends Controller
                     'errorMessage' => 'Error generating valid BPMN XML'
                 ], 422);
             }
-
-            // 1. Crear el registro en la base de datos (sin xml aún)
-            $diagram = new Diagram();
-            $diagram->prompt = $prompt;
-            $diagram->xml = ''; // Temporalmente vacío
-            $diagram->save();
-
-            // 2. Definir la ruta y guardar el archivo
-            $folder = public_path('diagrams/' . $diagram->id);
-            if (!is_dir($folder)) {
-                mkdir($folder, 0777, true);
-            }
-            $fileName = 'diagram_bpmn.xsl';
-            $filePath = 'diagrams/' . $diagram->id . '/' . $fileName;
-            file_put_contents(public_path($filePath), $bpmnXml);
-
-            // 3. Actualizar el campo xml con la ruta
-            $diagram->xml = $filePath;
-            $diagram->save();
+  
 
             return response()->json([
                 'bpmnXml' => $bpmnXml,
-                'successMessage' => '¡Éxito! Se ha generado tu diagrama BPMN.',
-                'diagramId' => $diagram->id,
-                'xmlPath' => $filePath,
+                'successMessage' => '¡Éxito! Se ha generado tu diagrama BPMN.'
             ]);
         } catch (\Exception $e) {
             return response()->json([

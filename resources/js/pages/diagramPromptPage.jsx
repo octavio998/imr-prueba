@@ -4,14 +4,14 @@ import { Head } from '@inertiajs/react';
 import { Textarea } from "@/components/imr/textarea";
 import { Button } from "@/components/ui/button";
 import BpmnViewer from '@/components/imr/BpmnViewer';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CheckCircle, Loader2 } from "lucide-react";
 import axios from 'axios';
 
 function FancyListItem({ text }) {
   return (
     <li className="flex items-center gap-3 py-2 px-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-      <CheckCircle className="w-5 h-5 text-green-600" />
+      <CheckCircle className="w-5 h-5 min-w-[20px] min-h-[20px] text-green-600" />
       <span className="text-gray-800 font-medium">{text}</span>
     </li>
   );
@@ -30,6 +30,14 @@ export default function DiagramPromptPage() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [processing, setProcessing] = useState(false);
+
+  // Ocultar mensaje de éxito después de 10 segundos
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => setSuccessMessage(''), 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,7 +84,7 @@ export default function DiagramPromptPage() {
 
         {successMessage && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-800">
-            <strong>¡Éxito!</strong> {successMessage}
+            <strong>{successMessage}</strong> 
           </div>
         )}
 
@@ -115,7 +123,7 @@ export default function DiagramPromptPage() {
             <ul className="space-y-3">
               <FancyListItem text="Describí en el campo de texto tu proceso empresarial para generar un diagrama BPMN. Enviá el prompt para generar uno." />
               <FancyListItem text="Editá el diagrama generado, añadí objetos a gusto." />
-              <FancyListItem text="Al finalizar, podés guardarlo. Los diagramas guardados los podrás ver en tu perfil." />
+              <FancyListItem text="Al finalizar, podés guardarlo. Los diagramas guardados los podrás ver en el dashboard." />
             </ul>
             {processing && (
               <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -129,7 +137,7 @@ export default function DiagramPromptPage() {
         </div>
 
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-          <BpmnViewer diagramXML={xml} />
+          <BpmnViewer diagramXML={xml} prompt={prompt}/>
         </div>
       </div>
     </AppLayout>

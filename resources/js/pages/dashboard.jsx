@@ -32,7 +32,7 @@ export default function Dashboard() {
         if (diagramas && Array.isArray(diagramas)) {
             diagramas.forEach(diagrama => {
                 if (diagrama.xml && !xmls[diagrama.id]) {
-                    fetch(`/${diagrama.xml}`)
+                    fetch(`diagrams/${+diagrama.id+'/'+diagrama.xml}`)
                         .then(res => res.text())
                         .then(text => {
                             setXmls(prev => ({ ...prev, [diagrama.id]: text }));
@@ -111,17 +111,17 @@ export default function Dashboard() {
                                     <div className="flex justify-between items-center mb-2">
                                         <h2 className="font-bold text-lg">{diagrama.nombre || `Diagrama #${diagrama.id}`}</h2>
                                         <button
-  onClick={() => handleEliminarClick(diagrama)}
-  className="p-2 rounded-full bg-red-500 text-white hover:bg-red-600 hover:scale-105 active:scale-95 transition-all duration-150 ease-in-out disabled:opacity-50 cursor-pointer"
-  title="Eliminar"
->
-  <Trash className="w-4 h-4" />
-</button>
+                                        onClick={() => handleEliminarClick(diagrama)}
+                                        className="p-2 rounded-full bg-red-500 text-white hover:bg-red-600 hover:scale-105 active:scale-95 transition-all duration-150 ease-in-out disabled:opacity-50 cursor-pointer"
+                                        title="Eliminar"
+                                        >
+                                        <Trash className="w-4 h-4" />
+                                        </button>
                                     </div>
                                     <div className="mb-2 text-xs text-gray-500 break-all">{diagrama.xml}</div>
                                     {xmls[diagrama.id] ? (
                                         <div className="border rounded bg-gray-50 p-2">
-                                            <BpmnViewer diagramXML={xmls[diagrama.id]} />
+                                            <BpmnViewer diagramXML={'/diagrams/'+diagrama.id+'/'+diagrama.xml} data-id={diagrama.id}/>
                                         </div>
                                     ) : (
                                         <div className="text-gray-400 text-sm">Cargando diagrama...</div>

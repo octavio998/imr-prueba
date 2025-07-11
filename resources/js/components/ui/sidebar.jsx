@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip";
-
+import { Menu } from "lucide-react";
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
@@ -142,11 +142,11 @@ function Sidebar({ side = "left", variant = "sidebar", collapsible = "offcanvas"
 function SidebarTrigger({ className, onClick, ...props }) {
     const { toggleSidebar } = useSidebar();
 
-    return (<Button data-sidebar="trigger" data-slot="sidebar-trigger" variant="ghost" size="icon" className={cn("h-7 w-7", className)} onClick={(event) => {
+    return (<Button data-sidebar="trigger" data-slot="sidebar-trigger" variant="ghost" size="icon" className={cn("h-10 w-10", className)} onClick={(event) => {
             onClick?.(event);
             toggleSidebar();
         }} {...props}>
-      <PanelLeftIcon />
+      <Menu/>
       <span className="sr-only">Toggle Sidebar</span>
     </Button>);
 }
