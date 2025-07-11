@@ -11,7 +11,7 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 
 import { Undo, Redo, Save } from 'lucide-react';
 
-export default function BpmnEditor({ diagramXML, 'data-id': dataId, prompt }) {
+export default function BpmnViewer({ diagramXML, 'data-id': dataId, prompt }) {
   const containerRef = useRef(null);
   const propertiesPanelRef = useRef(null);
   const modelerRef = useRef(null);
